@@ -1,0 +1,141 @@
+(node:27398) [DEP0176] DeprecationWarning: fs.F_OK is deprecated, use fs.constants.F_OK instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+newman
+
+Lab05 API Tests
+
+❏ Test 1 - Happy path
+↳ 1.1 Setup student
+  PUT http://localhost:3000/students/B242270058 [200 OK, 178B, 28ms]
+  ✓  Setup: оюутан амжилттай үүссэн
+
+↳ 1.2 Setup course
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 4ms]
+  ✓  Setup: хичээл амжилттай үүссэн
+
+↳ 1.3 POST registration
+  POST http://localhost:3000/registrations [201 Created, 203B, 3ms]
+  ✓  Happy path: статус 201
+  ✓  Happy path: result=OK ба registrationID тоо
+
+❏ Test 2 - No student
+↳ New Request
+  PUT http://localhost:3000/courses/CS999 [200 OK, 178B, 3ms]
+  ✓  Setup: хичээл үүссэн
+
+↳ New Request
+  POST http://localhost:3000/registrations [200 OK, 192B, 3ms]
+  ✓  Оюутан байхгүй: статус 200
+  ✓  Оюутан байхгүй: ERROR_NO_STUDENT
+
+❏ Test 3 - Inactive
+↳ New Request
+  PUT http://localhost:3000/students/B242270058 [200 OK, 178B, 3ms]
+  ✓  Setup: идэвхгүй оюутан үүссэн
+
+↳ New Request
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 2ms]
+  ✓  Setup: хичээл үүссэн
+
+↳ New Request
+  POST http://localhost:3000/registrations [200 OK, 198B, 2ms]
+  ✓  Идэвхгүй оюутан: статус 200
+  ✓  Идэвхгүй оюутан: ERROR_INACTIVE_STUDENT
+
+❏ Test 4 - No course
+↳ New Request
+  PUT http://localhost:3000/students/B242270058 [200 OK, 178B, 3ms]
+  ✓  Setup: идэвхтэй оюутан үүссэн
+
+↳ New Request
+  POST http://localhost:3000/registrations [200 OK, 191B, 4ms]
+  ✓  Хичээл байхгүй: статус 200
+  ✓  Хичээл байхгүй: ERROR_NO_COURSE
+
+❏ Test 5 - Prereq missing
+↳ New Request
+  PUT http://localhost:3000/students/B242270058 [200 OK, 178B, 3ms]
+  ✓  Setup: оюутан CS201-тэй
+
+↳ New Request
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 3ms]
+  ✓  Setup: хичээл 2 урьдачтай
+
+↳ New Request
+  POST http://localhost:3000/registrations [200 OK, 215B, 2ms]
+  ✓  Урьдач дутуу: статус 200
+  ✓  Урьдач дутуу: ERROR_PREREQUISITES, missing=CS202
+
+❏ Test 6 - No studentID
+↳ New Request
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 1ms]
+  ✓  Setup: хичээл үүссэн
+
+↳ New Request
+  POST http://localhost:3000/registrations [400 Bad Request, 202B, 3ms]
+  ✓  studentID дутуу: статус 400
+  ✓  studentID дутуу: ERROR_BAD_REQUEST
+
+❏ Test 7 - No courseID
+↳ New Request
+  PUT http://localhost:3000/students/B242270058 [200 OK, 178B, 1ms]
+  ✓  Setup: оюутан үүссэн
+
+↳ New Request
+  POST http://localhost:3000/registrations [400 Bad Request, 202B, 2ms]
+  ✓  courseID дутуу: статус 400
+  ✓  courseID дутуу: ERROR_BAD_REQUEST
+
+❏ Test 8 - Bad JSON
+↳ New Request
+  POST http://localhost:3000/registrations [400 Bad Request, 199B, 3ms]
+  ✓  Буруу JSON: статус 400
+  ✓  Буруу JSON: ERROR_BAD_JSON
+
+❏ Test 9 - No prereq course
+↳ New Request
+  PUT http://localhost:3000/students/B242270058 [200 OK, 178B, 1ms]
+  ✓  Setup: оюутан хоосон coursesTaken-тай
+
+↳ New Request
+  PUT http://localhost:3000/courses/CS101 [200 OK, 178B, 2ms]
+  ✓  Setup: хичээл урьдачгүй
+
+↳ New Request
+  POST http://localhost:3000/registrations [201 Created, 203B, 2ms]
+  ✓  Урьдачгүй: статус 201
+  ✓  Урьдачгүй: result=OK ба registrationID тоо
+
+❏ Test 10 - Empty coursesTaken
+↳ New Request
+  PUT http://localhost:3000/students/B242270058 [200 OK, 178B, 1ms]
+  ✓  Setup: оюутан хоосон
+
+↳ New Request
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 2ms]
+  ✓  Setup: хичээл урьдачтай
+
+↳ New Request
+  POST http://localhost:3000/registrations [200 OK, 215B, 2ms]
+  ✓  Хоосон taken: статус 200
+  ✓  Хоосон taken: ERROR_PREREQUISITES, missing=CS201
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               1 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │              24 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │              24 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │               0 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │              34 │               0 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 433ms                                   │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 563B (approx)                          │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 3ms [min: 1ms, max: 28ms, s.d.: 5ms] │
+└─────────────────────────────────────────────────────────────┘
